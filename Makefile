@@ -18,7 +18,7 @@ TARGET := project_noise_dsi
 BUILD := build
 SOURCES := source
 INCLUDES := include
-LIBDIRS := $(LIBNDS)
+LIBDIRS := $(LIBNDS) $(PORTLIBS)
 LIBS := -lmm9 -lfat -lnds9
 
 CFLAGS := -g -Wall -Wextra -O2 -ffunction-sections -fdata-sections
