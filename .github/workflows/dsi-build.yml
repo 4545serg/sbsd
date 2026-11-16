@@ -1,0 +1,49 @@
+
+name: PROJECT NOISE DSI Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: devkitpro/devkitarm:20260610
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nintendo DS dependencies
+        run: |
+          dkp-pacman -S --needed --noconfirm nds-dev
+
+      - name: Verify toolchain
+        run: |
+          test -n "$DEVKITPRO"
+          test -n "$DEVKITARM"
+          test -f "$DEVKITARM/ds_rules"
+          which arm-none-eabi-gcc
+          which ndstool
+
+      - name: Build PROJECT NOISE DSI
+        run: |
+          make clean
+          make -j2
+
+      - name: Verify ROM
+        run: |
+          test -s project_noise_dsi.nds
+          file project_noise_dsi.nds
+          ls -lh project_noise_dsi.nds
+
+      - name: Upload DSi ROM
+        uses: actions/upload-artifact@v4
+        with:
+          name: PROJECT-NOISE-DSI
+          path: project_noise_dsi.nds
+          if-no-files-found: error
